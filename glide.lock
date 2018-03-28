@@ -1,5 +1,5 @@
-hash: ec14b5ceeb99107692d249d7f528825c9a6269abe59f4601154d7e6aa709369e
-updated: 2018-03-28T15:25:18.298633+02:00
+hash: e5d253bc9b6cc3f982d72d1725563dcdd27fb605bb939414b6471a9964bc1191
+updated: 2018-03-28T15:36:09.667199+02:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -223,7 +223,7 @@ imports:
   subpackages:
   - diffmatchpatch
 - name: github.com/sirupsen/logrus
-  version: 90150a8ed11b6ce285e77e8af2b0109559ce4777
+  version: d682213848ed68c0a260ca37d6dd5ace8423f5ba
 - name: github.com/spf13/cobra
   version: a1f051bc3eba734da4772d60e2d677f47cf93ef4
   subpackages:
