@@ -117,6 +117,11 @@ func (t *ISOTime) UnmarshalJSON(data []byte) error {
 	return err
 }
 
+// String implements the Stringer interface
+func (t ISOTime) String() string {
+	return time.Time(t).Format(iso8601)
+}
+
 // NotificationLevelValue represents a notification level.
 type NotificationLevelValue int
 
@@ -272,6 +277,7 @@ type Client struct {
 	Environments         *EnvironmentsService
 	Events               *EventsService
 	Features             *FeaturesService
+	GitIgnoreTemplates   *GitIgnoreTemplatesService
 	Groups               *GroupsService
 	GroupMembers         *GroupMembersService
 	Issues               *IssuesService
@@ -286,6 +292,7 @@ type Client struct {
 	NotificationSettings *NotificationSettingsService
 	PagesDomains         *PagesDomainsService
 	Pipelines            *PipelinesService
+	PipelineSchedules    *PipelineSchedulesService
 	PipelineTriggers     *PipelineTriggersService
 	Projects             *ProjectsService
 	ProjectMembers       *ProjectMembersService
@@ -294,6 +301,7 @@ type Client struct {
 	Repositories         *RepositoriesService
 	RepositoryFiles      *RepositoryFilesService
 	Runners              *RunnersService
+	Search               *SearchService
 	Services             *ServicesService
 	Session              *SessionService
 	Settings             *SettingsService
@@ -357,6 +365,7 @@ func newClient(httpClient *http.Client, tokenType tokenType, token string) *Clie
 	c.Environments = &EnvironmentsService{client: c}
 	c.Events = &EventsService{client: c}
 	c.Features = &FeaturesService{client: c}
+	c.GitIgnoreTemplates = &GitIgnoreTemplatesService{client: c}
 	c.Groups = &GroupsService{client: c}
 	c.GroupMembers = &GroupMembersService{client: c}
 	c.Issues = &IssuesService{client: c, timeStats: timeStats}
@@ -371,6 +380,7 @@ func newClient(httpClient *http.Client, tokenType tokenType, token string) *Clie
 	c.NotificationSettings = &NotificationSettingsService{client: c}
 	c.PagesDomains = &PagesDomainsService{client: c}
 	c.Pipelines = &PipelinesService{client: c}
+	c.PipelineSchedules = &PipelineSchedulesService{client: c}
 	c.PipelineTriggers = &PipelineTriggersService{client: c}
 	c.Projects = &ProjectsService{client: c}
 	c.ProjectMembers = &ProjectMembersService{client: c}
@@ -380,6 +390,7 @@ func newClient(httpClient *http.Client, tokenType tokenType, token string) *Clie
 	c.RepositoryFiles = &RepositoryFilesService{client: c}
 	c.Runners = &RunnersService{client: c}
 	c.Services = &ServicesService{client: c}
+	c.Search = &SearchService{client: c}
 	c.Session = &SessionService{client: c}
 	c.Settings = &SettingsService{client: c}
 	c.Sidekiq = &SidekiqService{client: c}
@@ -506,25 +517,34 @@ func newResponse(r *http.Response) *Response {
 	return response
 }
 
+const (
+	xTotal      = "X-Total"
+	xTotalPages = "X-Total-Pages"
+	xPerPage    = "X-Per-Page"
+	xPage       = "X-Page"
+	xNextPage   = "X-Next-Page"
+	xPrevPage   = "X-Prev-Page"
+)
+
 // populatePageValues parses the HTTP Link response headers and populates the
 // various pagination link values in the Response.
 func (r *Response) populatePageValues() {
-	if totalItems := r.Response.Header.Get("X-Total"); totalItems != "" {
+	if totalItems := r.Response.Header.Get(xTotal); totalItems != "" {
 		r.TotalItems, _ = strconv.Atoi(totalItems)
 	}
-	if totalPages := r.Response.Header.Get("X-Total-Pages"); totalPages != "" {
+	if totalPages := r.Response.Header.Get(xTotalPages); totalPages != "" {
 		r.TotalPages, _ = strconv.Atoi(totalPages)
 	}
-	if itemsPerPage := r.Response.Header.Get("X-Per-Page"); itemsPerPage != "" {
+	if itemsPerPage := r.Response.Header.Get(xPerPage); itemsPerPage != "" {
 		r.ItemsPerPage, _ = strconv.Atoi(itemsPerPage)
 	}
-	if currentPage := r.Response.Header.Get("X-Page"); currentPage != "" {
+	if currentPage := r.Response.Header.Get(xPage); currentPage != "" {
 		r.CurrentPage, _ = strconv.Atoi(currentPage)
 	}
-	if nextPage := r.Response.Header.Get("X-Next-Page"); nextPage != "" {
+	if nextPage := r.Response.Header.Get(xNextPage); nextPage != "" {
 		r.NextPage, _ = strconv.Atoi(nextPage)
 	}
-	if previousPage := r.Response.Header.Get("X-Prev-Page"); previousPage != "" {
+	if previousPage := r.Response.Header.Get(xPrevPage); previousPage != "" {
 		r.PreviousPage, _ = strconv.Atoi(previousPage)
 	}
 }

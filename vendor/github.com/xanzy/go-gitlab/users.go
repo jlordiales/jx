@@ -50,6 +50,7 @@ type User struct {
 	ExternUID        string          `json:"extern_uid"`
 	Provider         string          `json:"provider"`
 	ThemeID          int             `json:"theme_id"`
+	LastActivityOn   *ISOTime        `json:"last_activity_on"`
 	ColorSchemeID    int             `json:"color_scheme_id"`
 	IsAdmin          bool            `json:"is_admin"`
 	AvatarURL        string          `json:"avatar_url"`
@@ -630,6 +631,7 @@ type ImpersonationToken struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ce/api/users.html#get-all-impersonation-tokens-of-a-user
 type GetAllImpersonationTokensOptions struct {
+	ListOptions
 	State *string `url:"state,omitempty" json:"state,omitempty"`
 }
 
