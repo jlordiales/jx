@@ -52,6 +52,8 @@ import:
   version: 1.0.0
 - package: github.com/trivago/tgo
   version: 1.0.1
+- package: github.com/xanzy/go-gitlab
+- package: github.com/sirupsen/logrus
 testImport:
 - package: github.com/stretchr/testify
   subpackages:
